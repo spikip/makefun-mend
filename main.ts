@@ -367,7 +367,10 @@ function unifiedEdit(sec: USection, strict: boolean): Edit {
     const deletion = sec.delFile || (sec.hasPair && sec.pairNew === null);
 
     if (creation) {
-      const p = newP!;
+      // A creation whose new path is /dev/null names no file: there is nowhere
+      // to write the + lines, and the section changes nothing.
+      if (newP === null) return;
+      const p = newP;
       if (!isSafe(p)) throw new Fail('unsafe', p);
       if (tree.get(p) !== null) throw new Fail('exists', p);
       const all: BodyLine[] = [];
